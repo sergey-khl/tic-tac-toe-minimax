@@ -263,8 +263,8 @@ class Game():
             system('clear')
 
 
-class Reset():
-    def __init__(self, state):
+class Console():
+    def __init__(self):
         self.type = str(self.__class__)
 
     def __str__(self):
@@ -293,12 +293,13 @@ def main():
     """
     Main function that calls all functions
     """
-    g = Game(board)
+    game = Game(board)
+    term = Console()
     # Paul Lu.  Set the seed to get deterministic behaviour for each run.
     #       Makes it easier for testing and tracing for understanding.
     randomseed(274 + 2020)
 
-    g.clean()
+    term.clean()
     h_choice = ''  # X or O
     c_choice = ''  # X or O
     first = ''  # if human is the first
@@ -321,7 +322,7 @@ def main():
         c_choice = 'X'
 
     # Human may starts first
-    g.clean()
+    term.clean()
     
     while first != 'Y' and first != 'N':
         try:
@@ -333,28 +334,28 @@ def main():
             print('Bad choice')
 
     # Main loop of this game
-    while len(g.empty_cells()) > 0 and not g.game_over():
+    while len(game.empty_cells()) > 0 and not game.game_over():
         if first == 'N':
-            g.ai_turn(c_choice, h_choice)
+            game.ai_turn(c_choice, h_choice)
             first = ''
 
-        g.human_turn(c_choice, h_choice)
-        g.ai_turn(c_choice, h_choice)
+        game.human_turn(c_choice, h_choice)
+        game.ai_turn(c_choice, h_choice)
     
     # Game over message
-    if g.wins(HUMAN):
-        g.clean()
+    if game.wins(HUMAN):
+        term.clean()
         print(f'Human turn [{h_choice}]')
-        g.render(c_choice, h_choice)
+        game.render(c_choice, h_choice)
         print('YOU WIN!')
-    elif g.wins(COMP):
-        g.clean()
+    elif game.wins(COMP):
+        term.clean()
         print(f'Computer turn [{c_choice}]')
-        g.render(c_choice, h_choice)
+        game.render(c_choice, h_choice)
         print('YOU LOSE!')
     else:
-        g.clean()
-        g.render(c_choice, h_choice)
+        term.clean()
+        game.render(c_choice, h_choice)
         print('DRAW!')
 
     exit()
