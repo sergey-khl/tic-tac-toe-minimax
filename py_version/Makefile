@@ -19,7 +19,7 @@ t3:
 	make dotest NUM=3
 
 dotest:
-	python3 minimax.py < input.$(NUM) > output.$(NUM)
+	python3 oominimax.py < input.$(NUM) > output.$(NUM)
 	diff output.$(NUM) output.$(NUM).correct
 	cksum output.$(NUM)
 	cksum output.$(NUM).correct

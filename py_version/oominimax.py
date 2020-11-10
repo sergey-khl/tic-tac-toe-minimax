@@ -138,25 +138,7 @@ class Game():
 
         return best
 
-    def render(self, c_choice, h_choice):
-        """
-        Print the board on console
-        :param state: current state of the board
-        """
-
-        chars = {
-            -1: h_choice,
-            +1: c_choice,
-            0: ' '
-        }
-        str_line = '---------------'
-
-        print('\n' + str_line)
-        for row in self.state:
-            for cell in row:
-                symbol = chars[cell]
-                print(f'| {symbol} |', end='')
-            print('\n' + str_line)
+    
 
     def ai_turn(self, c_choice, h_choice):
         """
@@ -170,7 +152,7 @@ class Game():
         if depth == 0 or self.game_over():
             return
 
-        self.clean()
+        print()
         print(f'Computer turn [{c_choice}]')
         self.render(c_choice, h_choice)
 
@@ -204,7 +186,7 @@ class Game():
             7: [2, 0], 8: [2, 1], 9: [2, 2],
         }
 
-        self.clean()
+        print()
         print(f'Human turn [{h_choice}]')
         self.render(c_choice, h_choice)
 
@@ -248,6 +230,17 @@ class Game():
         else:
             return False
 
+
+class Output():
+    def __init__(self):
+        self.type = str(self.__class__)
+
+    def __str__(self):
+        self.type()
+
+    def __repr__(self):
+        return "<%d> %s" % (id(self), self.type)
+
     def clean(self):
         """
         Clears the console
@@ -262,15 +255,25 @@ class Game():
         else:
             system('clear')
 
-class Output():
-    def __init__(self):
-        self.type = str(self.__class__)
+    def render(self, state, c_choice, h_choice):
+        """
+        Print the board on console
+        :param state: current state of the board
+        """
 
-    def __str__(self):
-        self.type()
+        chars = {
+            -1: h_choice,
+            +1: c_choice,
+            0: ' '
+        }
+        str_line = '---------------'
 
-    def __repr__(self):
-        return "<%d> %s" % (id(self), self.type)
+        print('\n' + str_line)
+        for row in state:
+            for cell in row:
+                symbol = chars[cell]
+                print(f'| {symbol} |', end='')
+            print('\n' + str_line)
 
 
 
@@ -279,13 +282,13 @@ def main():
     Main function that calls all functions
     """
     game = Game(board)
-    
+    out = Output()
 
     # Paul Lu.  Set the seed to get deterministic behaviour for each run.
     #       Makes it easier for testing and tracing for understanding.
     randomseed(274 + 2020)
 
-    game.clean()
+    out.clean()
     h_choice = ''  # X or O
     c_choice = ''  # X or O
     first = ''  # if human is the first
@@ -308,7 +311,7 @@ def main():
         c_choice = 'X'
 
     # Human may starts first
-    game.clean()
+    out.clean()
     
     while first != 'Y' and first != 'N':
         try:
@@ -320,28 +323,28 @@ def main():
             print('Bad choice')
 
     # Main loop of this game
-    while len(g.empty_cells()) > 0 and not g.game_over():
+    while len(game.empty_cells()) > 0 and not game.game_over():
         if first == 'N':
-            g.ai_turn(c_choice, h_choice)
+            game.ai_turn(c_choice, h_choice)
             first = ''
 
-        g.human_turn(c_choice, h_choice)
-        g.ai_turn(c_choice, h_choice)
+        game.human_turn(c_choice, h_choice)
+        game.ai_turn(c_choice, h_choice)
     
     # Game over message
-    if g.wins(HUMAN):
-        g.clean()
+    if game.wins(HUMAN):
+        out.clean()
         print(f'Human turn [{h_choice}]')
-        g.render(c_choice, h_choice)
+        out.render(g.get_state(), c_choice, h_choice)
         print('YOU WIN!')
-    elif g.wins(COMP):
-        g.clean()
+    elif game.wins(COMP):
+        out.clean()
         print(f'Computer turn [{c_choice}]')
-        g.render(c_choice, h_choice)
+        out.render(g.get_state(), c_choice, h_choice)
         print('YOU LOSE!')
     else:
-        g.clean()
-        g.render(c_choice, h_choice)
+        out.clean()
+        out.render(g.get_state(), c_choice, h_choice)
         print('DRAW!')
 
     exit()
