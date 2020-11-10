@@ -262,18 +262,30 @@ class Game():
         else:
             system('clear')
 
+class Output():
+    def __init__(self):
+        self.type = str(self.__class__)
+
+    def __str__(self):
+        self.type()
+
+    def __repr__(self):
+        return "<%d> %s" % (id(self), self.type)
+
 
 
 def main():
     """
     Main function that calls all functions
     """
-    g = Game(board)
+    game = Game(board)
+    
+
     # Paul Lu.  Set the seed to get deterministic behaviour for each run.
     #       Makes it easier for testing and tracing for understanding.
     randomseed(274 + 2020)
 
-    g.clean()
+    game.clean()
     h_choice = ''  # X or O
     c_choice = ''  # X or O
     first = ''  # if human is the first
@@ -296,7 +308,7 @@ def main():
         c_choice = 'X'
 
     # Human may starts first
-    g.clean()
+    game.clean()
     
     while first != 'Y' and first != 'N':
         try:
