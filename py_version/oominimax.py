@@ -170,7 +170,7 @@ class Game():
         if depth == 0 or self.game_over():
             return
 
-        self.clean()
+        print()
         print(f'Computer turn [{c_choice}]')
         self.render(c_choice, h_choice)
 
@@ -204,7 +204,7 @@ class Game():
             7: [2, 0], 8: [2, 1], 9: [2, 2],
         }
 
-        self.clean()
+        print()
         print(f'Human turn [{h_choice}]')
         self.render(c_choice, h_choice)
 
@@ -247,20 +247,6 @@ class Game():
             return True
         else:
             return False
-
-    def clean(self):
-        """
-        Clears the console
-        """
-        # Paul Lu.  Do not clear screen to keep output human readable.
-        print()
-        return
-
-        os_name = platform.system().lower()
-        if 'windows' in os_name:
-            system('cls')
-        else:
-            system('clear')
 
 
 class Console():
