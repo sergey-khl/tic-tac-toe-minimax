@@ -263,6 +263,31 @@ class Game():
             system('clear')
 
 
+class Reset():
+    def __init__(self, state):
+        self.type = str(self.__class__)
+
+    def __str__(self):
+        self.type()
+
+    def __repr__(self):
+        return "<%d> %s" % (id(self), self.type)
+
+    def clean(self):
+        """
+        Clears the console
+        """
+        # Paul Lu.  Do not clear screen to keep output human readable.
+        print()
+        return
+
+        os_name = platform.system().lower()
+        if 'windows' in os_name:
+            system('cls')
+        else:
+            system('clear')
+
+
 
 def main():
     """
