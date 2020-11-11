@@ -16,30 +16,102 @@ Sergey Khlynovskiy
 CCID: khlynovs
 """
 
-HUMAN = -1
-COMP = +1
-board = [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0],
-]
 
 class Game():
-    def __init__(self, state):
-        self.type = str(self.__class__)
-        self.set_state(state)
+    def __init__(self):
+        """Constructs necessary attributes for the Game class.
+
+        Arguments: self: Represents instance of Game()
+
+        Return: None
+        """
+        # self.board (nested list): How the tic-tac-toe board looks.
+        self.board = [
+                      [0, 0, 0],
+                      [0, 0, 0],
+                      [0, 0, 0],
+                      ]
+        # self.HUMAN (int): Value to represent a human.
+        self.HUMAN = -1
+        # self.COMP (int): Value to represent computer.
+        self.COMP = 1
+        # self.state (nested list): Current state of the board.
+        self.set_state(self.board)
 
     def __str__(self):
-        self.type()
+        """Informal string representation of Game().
+
+        Arguments: self: Represents instance of Game().
+
+        Return: Informal string representing Game().
+        """
+        return """A tic-tac-toe game with a current board of {} and state of
+         {}. Where {} represents a human and {} a computer""".format(
+                self.get_board(),
+                self.get_state(),
+                self.get_HUMAN(),
+                self.get_COMP())
 
     def __repr__(self):
-        return "<%d> %s" % (id(self), self.type)
+        """Formal string representation of Game().
+
+        Arguments: self: Represents instance of Game().
+
+        Return: Formal string representing Game().
+        """
+        return id(self) + self.__class__
 
     def set_state(self, state):
+        """Setting current state of the game.
+
+        Arguments:
+        self: Represents instance of Game().
+        state (nested list): Current state of the game.
+
+        Return: None
+        """
+        # self.state (nested list): Construction of state.
         self.state = state
 
     def get_state(self):
+        """Getting the current state of the game.
+
+        Arguments:
+        self: Represents instance of Game().
+
+        Return: self.state (nested list): Current state of the game
+        """
         return self.state
+
+    def get_HUMAN(self):
+        """Getting value that represents a human.
+
+        Arguments:
+        self: Represents instance of Game().
+
+        Return: self.HUMAN (int): value that represents a human.
+        """
+        return self.HUMAN
+
+    def get_COMP(self):
+        """Getting value that represents a computer.
+
+        Arguments:
+        self: Represents instance of Game().
+
+        Return: self.COMP (int): value that represents a computer.
+        """
+        return self.COMP
+
+    def get_board(self):
+        """Getting what the board currently looks like.
+
+        Arguments:
+        self: Represents instance of Game().
+
+        Return: self.board (nested list): What the board looks like.
+        """
+        return self.board
 
     def evaluate(self):
         """
@@ -47,9 +119,9 @@ class Game():
         :param state: the state of the current board
         :return: +1 if the computer wins; -1 if the human wins; 0 draw
         """
-        if self.wins(COMP):
+        if self.wins(self.COMP):
             score = +1
-        elif self.wins(HUMAN):
+        elif self.wins(self.HUMAN):
             score = -1
         else:
             score = 0
@@ -87,7 +159,7 @@ class Game():
         :param state: the state of the current board
         :return: True if the human or computer wins
         """
-        return self.wins(HUMAN) or self.wins(COMP)
+        return self.wins(self.HUMAN) or self.wins(self.COMP)
 
     def empty_cells(self):
         """
@@ -113,7 +185,7 @@ class Game():
         :param player: an human or a computer
         :return: a list with [the best row, best col, best score]
         """
-        if player == COMP:
+        if player == self.COMP:
             best = [-1, -1, -infinity]
         else:
             best = [-1, -1, +infinity]
@@ -129,7 +201,7 @@ class Game():
             self.state[x][y] = 0
             score[0], score[1] = x, y
 
-            if player == COMP:
+            if player == self.COMP:
                 if score[2] > best[2]:
                     best = score  # max value
             else:
@@ -137,8 +209,6 @@ class Game():
                     best = score  # min value
 
         return best
-
-    
 
     def ai_turn(self, c_choice, h_choice):
         """
@@ -152,18 +222,21 @@ class Game():
         if depth == 0 or self.game_over():
             return
 
-        print()
+        # term (object): Instance of Console() class so its methods
+        # can be used.
+        term = Console()
+        term.clean()
         print(f'Computer turn [{c_choice}]')
-        self.render(c_choice, h_choice)
+        term.render(self.get_state(), c_choice, h_choice)
 
         if depth == 9:
             x = choice([0, 1, 2])
             y = choice([0, 1, 2])
         else:
-            move = self.minimax(depth, COMP)
+            move = self.minimax(depth, self.COMP)
             x, y = move[0], move[1]
 
-        self.set_move(x, y, COMP)
+        self.set_move(x, y, self.COMP)
         # Paul Lu.  Go full speed.
         # time.sleep(1)
 
@@ -186,15 +259,18 @@ class Game():
             7: [2, 0], 8: [2, 1], 9: [2, 2],
         }
 
-        print()
+        # term (object): Instance of Console() class so its methods
+        # can be used.
+        term = Console()
+        term.clean()
         print(f'Human turn [{h_choice}]')
-        self.render(c_choice, h_choice)
+        term.render(self.get_state(), c_choice, h_choice)
 
         while move < 1 or move > 9:
             try:
                 move = int(input('Use numpad (1..9): '))
                 coord = moves[move]
-                can_move = self.set_move(coord[0], coord[1], HUMAN)
+                can_move = self.set_move(coord[0], coord[1], self.HUMAN)
 
                 if not can_move:
                     print('Bad move')
@@ -225,21 +301,52 @@ class Game():
         :param player: the current player
         """
         if self.valid_move(x, y):
-            board[x][y] = player
+            self.board[x][y] = player
             return True
         else:
             return False
 
 
-class Output():
+class Console():
     def __init__(self):
-        self.type = str(self.__class__)
+        """Constructs necessary attributes for the Console class.
+
+        Arguments: self: Represents instance of Console()
+
+        Return: None
+        """
+        # self.basic_string (string): Most simple string able to be printed
+        # to console.
+        self.basic_string = ""
+
+    def get_basic_string(self):
+        """Getting what the board currently looks like.
+
+        Arguments:
+        self: Represents instance of Game().
+
+        Return: self.board (nested list): What the board looks like.
+        """
+        return self.basic_string
 
     def __str__(self):
-        self.type()
+        """Informal string representation of Console().
+
+        Arguments: self: Represents instance of Console().
+
+        Return: Informal string representing Console().
+        """
+        return """A representation of the console
+         with a basic string of {}""".format(self.get_basic_string())
 
     def __repr__(self):
-        return "<%d> %s" % (id(self), self.type)
+        """Formal string representation of Console().
+
+        Arguments: self: Represents instance of Console().
+
+        Return: Formal string representing Console().
+        """
+        return id(self) + self.__class__
 
     def clean(self):
         """
@@ -276,19 +383,20 @@ class Output():
             print('\n' + str_line)
 
 
-
 def main():
     """
     Main function that calls all functions
     """
-    game = Game(board)
-    out = Output()
-
+    # game (object): Instance of the class Game.
+    game = Game()
+    # term (object): Instance of the class Console.
+    term = Console()
     # Paul Lu.  Set the seed to get deterministic behaviour for each run.
     #       Makes it easier for testing and tracing for understanding.
     randomseed(274 + 2020)
 
-    out.clean()
+    term.clean()
+
     h_choice = ''  # X or O
     c_choice = ''  # X or O
     first = ''  # if human is the first
@@ -311,8 +419,8 @@ def main():
         c_choice = 'X'
 
     # Human may starts first
-    out.clean()
-    
+    term.clean()
+
     while first != 'Y' and first != 'N':
         try:
             first = input('First to start?[y/n]: ').upper()
@@ -330,24 +438,25 @@ def main():
 
         game.human_turn(c_choice, h_choice)
         game.ai_turn(c_choice, h_choice)
-    
+
     # Game over message
-    if game.wins(HUMAN):
-        out.clean()
+    if game.wins(game.get_HUMAN()):
+        term.clean()
         print(f'Human turn [{h_choice}]')
-        out.render(g.get_state(), c_choice, h_choice)
+        term.render(game.get_state(), c_choice, h_choice)
         print('YOU WIN!')
-    elif game.wins(COMP):
-        out.clean()
+    elif game.wins(game.get_COMP()):
+        term.clean()
         print(f'Computer turn [{c_choice}]')
-        out.render(g.get_state(), c_choice, h_choice)
+        term.render(game.get_state(), c_choice, h_choice)
         print('YOU LOSE!')
     else:
-        out.clean()
-        out.render(g.get_state(), c_choice, h_choice)
+        term.clean()
+        term.render(game.get_state(), c_choice, h_choice)
         print('DRAW!')
 
     exit()
-    
+
+
 if __name__ == '__main__':
     main()
